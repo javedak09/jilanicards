@@ -75,7 +75,38 @@ namespace Jilani_Cards
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
+                if (ds != null)
+                {
+                    if (ds.Tables.Count > 0)
+                    {
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            CVars.setUserID = ds.Tables[0].Rows[0]["id"].ToString();
+                            CVars.setUserName = ds.Tables[0].Rows[0]["userid"].ToString();
+
+                            CVars.storeFormObject = this;
+                            this.Hide();
+
+                            frmMain obj_frm = new frmMain();
+                            obj_frm.Show();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Invalid user id or password", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid user id or password", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid user id or password", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
                 isconnected = 0;
+
             }
 
             catch (Exception ex)
@@ -87,10 +118,8 @@ namespace Jilani_Cards
         }
 
 
-        private int Login_Sqlite()
+        private void Login_Sqlite()
         {
-            int isconnected = 0;
-
             try
             {
                 CConnection cn = new CConnection();
@@ -98,15 +127,42 @@ namespace Jilani_Cards
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
-                isconnected = 0;
+
+                if (ds != null)
+                {
+                    if (ds.Tables.Count > 0)
+                    {
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            CVars.setUserID = ds.Tables[0].Rows[0]["id"].ToString();
+                            CVars.setUserName = ds.Tables[0].Rows[0]["userid"].ToString();
+
+                            CVars.storeFormObject = this;
+                            this.Hide();
+
+                            frmMain obj_frm = new frmMain();
+                            obj_frm.Show();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Invalid user id or password", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid user id or password", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid user id or password", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
             catch (Exception ex)
             {
-                isconnected = 1;
-            }
 
-            return isconnected;
+            }
         }
 
         private void frmLogin_Load_1(object sender, EventArgs e)
@@ -273,9 +329,7 @@ namespace Jilani_Cards
         private void frmLogin_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == '\r')
-            {
                 SendKeys.Send("{TAB}");
-            }
         }
     }
 }

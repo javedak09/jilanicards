@@ -10,21 +10,82 @@ namespace Jilani_Cards
     {
         static string appName = "ASR Technologies";
         static string mobNo = "+92-330-3714438";
-        static string emailID= "abdulsamadattariqadri@gmail.com";
-        public static string getAppName()
+        static string emailID = "abdulsamadattariqadri@gmail.com";
+
+        static string userid;
+        static string username;
+
+
+        static Form frmlogin;
+
+
+        public static string getAppName
         {
-            return appName;
+            get
+            {
+                return appName;
+            }
         }
 
-        public static string getEmailID()
+        public static string getEmailID
         {
-            return emailID;
+            get
+            {
+                return emailID;
+            }
         }
 
-        public static string getMobileNo()
+        public static string getMobileNo
         {
-            return mobNo;
+            get
+            {
+                return mobNo;
+            }
         }
+
+
+        public static String setUserID
+        {
+            get
+            {
+                return userid;
+            }
+
+            set
+            {
+                userid = value;
+            }
+        }
+
+
+
+        public static String setUserName
+        {
+            get
+            {
+                return username;
+            }
+
+            set
+            {
+                username = value;
+            }
+        }
+
+
+        public static Form storeFormObject
+        {
+            get
+            {
+                return frmlogin;
+            }
+
+            set
+            {
+                frmlogin = value;
+            }
+        }
+
 
     }
 }

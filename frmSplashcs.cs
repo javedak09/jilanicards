@@ -19,9 +19,9 @@ namespace Jilani_Cards
 
         private void frmSplashcs_Load(object sender, EventArgs e)
         {
-            label2.Text = CVars.getAppName();
-            label3.Text = CVars.getMobileNo();
-            label4.Text = CVars.getEmailID();
+            label2.Text = CVars.getAppName;
+            label3.Text = CVars.getMobileNo;
+            label4.Text = CVars.getEmailID;
 
             timer1.Enabled = true;
         }

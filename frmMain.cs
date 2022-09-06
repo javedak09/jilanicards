@@ -16,5 +16,11 @@ namespace Jilani_Cards
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            frmItemCode frm = new frmItemCode();
+            frm.Show();
+        }
     }
 }
