@@ -255,6 +255,7 @@
             this.cmdPurchases.TabIndex = 0;
             this.cmdPurchases.Text = "Purchases";
             this.cmdPurchases.UseVisualStyleBackColor = true;
+            this.cmdPurchases.Click += new System.EventHandler(this.cmdPurchases_Click);
             // 
             // groupBox2
             // 

@@ -366,7 +366,7 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("SELECT [id],[itemcode],[itemdesc],[itemcategory],[itemunit],[itemopenqty],[itemcolor], case when [cp] = 1 then 'CP' end, case when [sp] = 1 then 'SP' end, [cpvalue],[spvalue] FROM [itemcoding]", cn.cn);
+                SqlDataAdapter da = new SqlDataAdapter("SELECT [id],[itemcode],[itemdesc],[itemcategory],[itemunit],[itemopenqty],[itemcolor], case when [cp] = 1 then 'CP' end 'CP', case when [sp] = 1 then 'SP' end 'SP', [cpvalue],[spvalue] FROM [itemcoding]", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 

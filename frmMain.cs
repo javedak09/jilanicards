@@ -20,7 +20,7 @@ namespace Jilani_Cards
         private void button1_Click(object sender, EventArgs e)
         {
             frmItemCode frm = new frmItemCode();
-            frm.Show();
+            frm.ShowDialog();
         }
 
         private void cmdExit_Click(object sender, EventArgs e)
@@ -43,6 +43,12 @@ namespace Jilani_Cards
         private void frmMain_Load(object sender, EventArgs e)
         {
             label1.Text = CVars.getAppName + " / " + CVars.getMobileNo + " / " + CVars.getEmailID;
+        }
+
+        private void cmdPurchases_Click(object sender, EventArgs e)
+        {
+            frmPurchase frm = new frmPurchase();
+            frm.ShowDialog();
         }
     }
 }
