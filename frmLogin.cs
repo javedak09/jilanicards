@@ -49,9 +49,14 @@ namespace Jilani_Cards
                 MessageBox.Show("Please enter password", "Blank Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtpassword.Focus();
             }
-            else if (string.IsNullOrEmpty(txtcategory.SelectedValue.ToString()))
+            else if (string.IsNullOrEmpty(txtcategory.Text))
             {
                 MessageBox.Show("Please select category", "Blank Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtcategory.Focus();
+            }
+            else if (txtcategory.Text == "Select Category")
+            {
+                MessageBox.Show("Please select valid category", "Blank Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtcategory.Focus();
             }
             else
@@ -84,11 +89,11 @@ namespace Jilani_Cards
                             CVars.setUserID = ds.Tables[0].Rows[0]["id"].ToString();
                             CVars.setUserName = ds.Tables[0].Rows[0]["userid"].ToString();
 
-                            CVars.storeFormObject = this;
-                            this.Hide();
+                            this.Close();
 
                             frmMain obj_frm = new frmMain();
                             obj_frm.Show();
+                            
                         }
                         else
                         {
@@ -137,11 +142,11 @@ namespace Jilani_Cards
                             CVars.setUserID = ds.Tables[0].Rows[0]["id"].ToString();
                             CVars.setUserName = ds.Tables[0].Rows[0]["userid"].ToString();
 
-                            CVars.storeFormObject = this;
-                            this.Hide();
+                            this.Close();
 
                             frmMain obj_frm = new frmMain();
                             obj_frm.Show();
+                            
                         }
                         else
                         {

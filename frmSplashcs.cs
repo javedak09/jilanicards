@@ -39,7 +39,7 @@ namespace Jilani_Cards
             }
             else
             {
-                progressBar1.Value += 1;
+                progressBar1.Value += 2;
             }
         }
     }

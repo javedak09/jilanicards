@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using Microsoft.VisualBasic;
 
 namespace Jilani_Cards
 {
@@ -37,6 +38,30 @@ namespace Jilani_Cards
         }
 
 
+        private void getColor()
+        {
+            try
+            {
+                Dictionary<string, string> comboSource = new Dictionary<string, string>();
+                comboSource.Add("Select Color", "0");
+                comboSource.Add("Red", "1");
+                comboSource.Add("Blue", "2");
+                comboSource.Add("Green", "3");
+
+                ddlColor.DataSource = new BindingSource(comboSource, null);
+                ddlColor.DisplayMember = "Key";
+                ddlColor.ValueMember = "Value";
+
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+
         private int AddCategory()
         {
             int isconnected = 0;
@@ -54,7 +79,7 @@ namespace Jilani_Cards
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                //MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 isconnected = 1;
             }
 
@@ -114,7 +139,7 @@ namespace Jilani_Cards
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                //MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 isconnected = 1;
             }
 
@@ -125,6 +150,8 @@ namespace Jilani_Cards
 
             return isconnected;
         }
+
+
 
 
 
@@ -168,9 +195,9 @@ namespace Jilani_Cards
             if (FillGrid() == 1)
                 FillGrid_Sqlite();
 
+            getColor();
 
             txtItemCode.ReadOnly = false;
-
         }
 
         private void cmdAdd_Click(object sender, EventArgs e)
@@ -195,14 +222,22 @@ namespace Jilani_Cards
             {
                 MessageBox.Show("Please enter item opening quantity", "Blank Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            else if (string.IsNullOrEmpty(ddlColor.Text))
+            {
+                MessageBox.Show("Please enter item color ", "Blank Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             else
             {
-                if (AddItemCoding() == 1)
-                    AddItemCoding_Sqlite();
+                AddItemCoding();
+                AddItemCoding_Sqlite();
+
 
 
                 if (FillGrid() == 1)
                     FillGrid_Sqlite();
+
+
+                ClearFields();
 
             }
         }
@@ -216,7 +251,24 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("insert into itemcoding (itemcode, itemdesc, itemcategory, itemunit, itemopenqty) values('" + txtItemCode.Text + "', '" + txtdesc.Text + "', '" + ddlCategory.SelectedValue + "', '" + txtunit.Text + "', '" + txtopenqty.Text + "')", cn.cn);
+                string val_rdo_cp = "";
+                string val_rdo_sp = "";
+
+
+                if (chkCP.Checked)
+                {
+                    val_rdo_cp = "1";
+                }
+
+                if (chkSP.Checked)
+                {
+                    val_rdo_sp = "1";
+                }
+
+
+
+
+                SqlDataAdapter da = new SqlDataAdapter("insert into itemcoding (itemcode, itemdesc, itemcategory, itemunit, itemopenqty, itemcolor, cp, sp, cpvalue, spvalue) values('" + txtItemCode.Text + "', '" + txtdesc.Text + "', '" + ddlCategory.SelectedValue + "', '" + txtunit.Text + "', '" + txtopenqty.Text + "', '" + ddlColor.Text + "', '" + val_rdo_cp + "', '" + val_rdo_sp + "', '" + txtCostPrice.Text + "', '" + txtSalePrice.Text + "')", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -225,7 +277,15 @@ namespace Jilani_Cards
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                if (ex.Message == "Violation of UNIQUE KEY constraint 'IX_itemcoding'. Cannot insert duplicate key in object 'dbo.itemcoding'. The duplicate key value is (1).\r\nThe statement has been terminated.")
+                {
+                    MessageBox.Show("Item Code already exist", "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                else
+                {
+                    MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+
                 isconnected = 1;
             }
 
@@ -245,7 +305,23 @@ namespace Jilani_Cards
 
             try
             {
-                SQLiteDataAdapter da = new SQLiteDataAdapter("insert into itemcoding (itemcode, itemdesc, itemcategory, itemunit, itemopenqty) values('" + txtItemCode.Text + "', '" + txtdesc.Text + "', '" + ddlCategory.SelectedValue + "', '" + txtunit.Text + "', '" + txtopenqty.Text + "')", cn.cn1);
+
+                string val_rdo_cp = "";
+                string val_rdo_sp = "";
+
+
+                if (chkCP.Checked)
+                {
+                    val_rdo_cp = "1";
+                }
+
+                if (chkSP.Checked)
+                {
+                    val_rdo_sp = "1";
+                }
+
+
+                SQLiteDataAdapter da = new SQLiteDataAdapter("insert into itemcoding (itemcode, itemdesc, itemcategory, itemunit, itemopenqty, itemcolor, cp, sp, cpvalue, spvalue) values('" + txtItemCode.Text + "', '" + txtdesc.Text + "', '" + ddlCategory.SelectedValue + "', '" + txtunit.Text + "', '" + txtopenqty.Text + "', '" + ddlColor.Text + "', '" + val_rdo_cp + "', '" + val_rdo_sp + "', '" + txtCostPrice.Text + "', '" + txtSalePrice.Text + "')", cn.cn1);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -265,6 +341,22 @@ namespace Jilani_Cards
         }
 
 
+        private void ClearFields()
+        {
+            txtItemCode.Text = "";
+            txtdesc.Text = "";
+            ddlCategory.SelectedValue = 0;
+            txtunit.Text = "";
+            txtopenqty.Text = "";
+            ddlColor.SelectedValue = 0;
+            chkCP.Checked = false;
+            chkSP.Checked = false;
+            txtCostPrice.Text = "";
+            txtSalePrice.Text = "";
+
+            txtItemCode.Focus();
+        }
+
 
         private int FillGrid()
         {
@@ -274,7 +366,7 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("select * from itemcoding", cn.cn);
+                SqlDataAdapter da = new SqlDataAdapter("SELECT [id],[itemcode],[itemdesc],[itemcategory],[itemunit],[itemopenqty],[itemcolor], case when [cp] = 1 then 'CP' end, case when [sp] = 1 then 'SP' end, [cpvalue],[spvalue] FROM [itemcoding]", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -283,7 +375,7 @@ namespace Jilani_Cards
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                //MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 isconnected = 1;
             }
 
@@ -304,7 +396,7 @@ namespace Jilani_Cards
 
             try
             {
-                SQLiteDataAdapter da = new SQLiteDataAdapter("select * from itemcoding", cn.cn1);
+                SQLiteDataAdapter da = new SQLiteDataAdapter("SELECT id,itemcode,itemdesc,itemcategory,itemunit,itemopenqty,itemcolor, case when cp = 1 then 'CP' end 'CP', case when sp = 1 then 'SP' end 'SP', cpvalue,spvalue FROM itemcoding", cn.cn1);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -334,9 +426,25 @@ namespace Jilani_Cards
             {
                 txtItemCode.Text = dgItemCoding.Rows[e.RowIndex].Cells[1].Value.ToString();
                 txtdesc.Text = dgItemCoding.Rows[e.RowIndex].Cells[2].Value.ToString();
-                ddlCategory.Text = dgItemCoding.Rows[e.RowIndex].Cells[3].Value.ToString();
+                ddlCategory.SelectedValue = dgItemCoding.Rows[e.RowIndex].Cells[3].Value.ToString();
                 txtunit.Text = dgItemCoding.Rows[e.RowIndex].Cells[4].Value.ToString();
                 txtopenqty.Text = dgItemCoding.Rows[e.RowIndex].Cells[5].Value.ToString();
+
+                ddlColor.Text = dgItemCoding.Rows[e.RowIndex].Cells[6].Value.ToString();
+
+                if (dgItemCoding.Rows[e.RowIndex].Cells[7].Value.ToString() == "CP")
+                {
+                    chkCP.Checked = true;
+                }
+
+                if (dgItemCoding.Rows[e.RowIndex].Cells[8].Value.ToString() == "SP")
+                {
+                    chkSP.Checked = true;
+                }
+
+
+                txtCostPrice.Text = dgItemCoding.Rows[e.RowIndex].Cells[9].Value.ToString();
+                txtSalePrice.Text = dgItemCoding.Rows[e.RowIndex].Cells[10].Value.ToString();
 
                 txtItemCode.ReadOnly = true;
             }
@@ -357,12 +465,17 @@ namespace Jilani_Cards
             }
             else
             {
-                if (UpdateItemCode() == 1)
-                    UpdateItemCode_Sqlite();
+                UpdateItemCode();
+                UpdateItemCode_Sqlite();
+
 
                 if (FillGrid() == 1)
                     FillGrid_Sqlite();
-            }           
+
+
+                ClearFields();
+
+            }
 
         }
 
@@ -376,7 +489,23 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("update itemcoding set itemdesc ='" + txtdesc.Text + "', itemcategory = '" + ddlCategory.SelectedValue + "', itemunit = '" + txtunit.Text + "', itemopenqty'" + txtopenqty.Text + "' where itemcode = '" + txtItemCode.Text + "'", cn.cn);
+
+                string val_rdo_cp = "";
+                string val_rdo_sp = "";
+
+
+                if (chkCP.Checked)
+                {
+                    val_rdo_cp = "1";
+                }
+
+                if (chkSP.Checked)
+                {
+                    val_rdo_sp = "1";
+                }
+
+
+                SqlDataAdapter da = new SqlDataAdapter("update itemcoding set itemdesc = '" + txtdesc.Text + "', itemcategory = '" + ddlCategory.SelectedValue + "', itemunit = '" + txtunit.Text + "', itemopenqty = '" + txtopenqty.Text + "', itemcolor = '" + ddlColor.Text + "', cp = '" + val_rdo_cp + "', sp = '" + val_rdo_sp + "', cpvalue = '" + txtCostPrice.Text + "', spvalue = '" + txtSalePrice.Text + "' where itemcode = '" + txtItemCode.Text + "'", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -385,7 +514,7 @@ namespace Jilani_Cards
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                //MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 isconnected = 1;
             }
 
@@ -406,7 +535,23 @@ namespace Jilani_Cards
 
             try
             {
-                SQLiteDataAdapter da = new SQLiteDataAdapter("update itemcoding set itemdesc ='" + txtdesc.Text + "', itemcategory = '" + ddlCategory.SelectedValue + "', itemunit = '" + txtunit.Text + "', itemopenqty'" + txtopenqty.Text + "' where itemcode = '" + txtItemCode.Text + "'", cn.cn1);
+
+                string val_rdo_cp = "";
+                string val_rdo_sp = "";
+
+
+                if (chkCP.Checked)
+                {
+                    val_rdo_cp = "1";
+                }
+
+                if (chkSP.Checked)
+                {
+                    val_rdo_sp = "1";
+                }
+
+
+                SQLiteDataAdapter da = new SQLiteDataAdapter("update itemcoding set itemdesc = '" + txtdesc.Text + "', itemcategory = '" + ddlCategory.SelectedValue + "', itemunit = '" + txtunit.Text + "', itemopenqty = '" + txtopenqty.Text + "', itemcolor = '" + ddlColor.Text + "', cp = '" + val_rdo_cp + "', sp = '" + val_rdo_sp + "', cpvalue = '" + txtCostPrice.Text + "', spvalue = '" + txtSalePrice.Text + "' where itemcode = '" + txtItemCode.Text + "'", cn.cn1);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -433,11 +578,48 @@ namespace Jilani_Cards
             else
             {
                 DeleteItem();
+                DeleteItem_Sqlite();
+
+                if (FillGrid() == 1)
+                    FillGrid_Sqlite();
+
+                ClearFields();
             }
         }
 
 
-        private void DeleteItem()
+
+        private int DeleteItem()
+        {
+            int isconnected = 0;
+
+            CConnection cn = new CConnection();
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter("delete itemcoding where itemcode = '" + txtItemCode.Text + "'", cn.cn);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                MessageBox.Show("Item coding deleted", "Transaction Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+
+            finally
+            {
+                cn = null;
+            }
+
+            return isconnected;
+        }
+
+
+
+        private void DeleteItem_Sqlite()
         {
             CConnection cn = new CConnection();
 
@@ -461,5 +643,20 @@ namespace Jilani_Cards
             }
         }
 
+        private void rdoCP_CheckedChanged(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void rdoSP_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgItemCoding_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

@@ -22,5 +22,27 @@ namespace Jilani_Cards
             frmItemCode frm = new frmItemCode();
             frm.Show();
         }
+
+        private void cmdExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void cmdStockManager_Click(object sender, EventArgs e)
+        {
+            frmItemCode frm = new frmItemCode();
+            frm.ShowDialog();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            frmChartOfAccounts frm = new frmChartOfAccounts();
+            frm.ShowDialog();
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            label1.Text = CVars.getAppName + " / " + CVars.getMobileNo + " / " + CVars.getEmailID;
+        }
     }
 }

@@ -165,7 +165,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::Jilani_Cards.Properties.Resources.bg;
+            this.BackgroundImage = global::Jilani_Cards.Properties.Resources.bg_main;
             this.ClientSize = new System.Drawing.Size(339, 405);
             this.ControlBox = false;
             this.Controls.Add(this.groupBox1);

@@ -89,7 +89,7 @@
             this.progressBar1.Step = 20;
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 4;
-            this.progressBar1.Value = 2;
+            this.progressBar1.Value = 20;
             // 
             // timer1
             // 
@@ -99,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::Jilani_Cards.Properties.Resources.bg;
+            this.BackgroundImage = global::Jilani_Cards.Properties.Resources.bg_main;
             this.ClientSize = new System.Drawing.Size(403, 292);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label4);
