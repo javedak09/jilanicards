@@ -68,7 +68,7 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("SELECT id, accountid, acctitle, openbalance, case when drcr = 1 then 'DR' else 'CR' end, case when nature = 1 then 'Account Payable' else 'Account Receivable' end, stax, ntnno, phone, addr1, addr2, addr3, actype1, actype2 FROM chartaccounts", cn.cn);
+                SqlDataAdapter da = new SqlDataAdapter("SELECT id, accountid, acctitle, openbalance, case when drcr = 1 then 'DR' else 'CR' end 'DrCr', case when nature = 1 then 'Account Payable' else 'Account Receivable' end 'nature', stax, ntnno, phone, addr1, addr2, addr3, case when actype1 = 1 then 'Leave A/c' end 'A/c Type', case when actype2 = 1 then 'Active A/c' end 'A/c Type' FROM chartaccounts", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -98,7 +98,7 @@ namespace Jilani_Cards
 
             try
             {
-                SQLiteDataAdapter da = new SQLiteDataAdapter("SELECT id, accountid, acctitle, openbalance, case when drcr = 1 then 'DR' else 'CR' end, case when nature = 1 then 'Account Payable' else 'Account Receivable' end, stax, ntnno, phone, addr1, addr2, addr3, actype1, actype2 FROM chartaccounts", cn.cn1);
+                SQLiteDataAdapter da = new SQLiteDataAdapter("SELECT id, accountid, acctitle, openbalance, case when drcr = 1 then 'DR' else 'CR' end 'DrCr', case when nature = 1 then 'Account Payable' else 'Account Receivable' end 'nature', stax, ntnno, phone, addr1, addr2, addr3, case when actype1 = 1 then 'Leave A/c' end 'A/c Type', case when actype2 = 1 then 'Active A/c' end 'A/c Type' FROM chartaccounts", cn.cn1);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -207,7 +207,8 @@ namespace Jilani_Cards
 
                 if (chkLeaveAcc.Checked)
                     val_actype1 = "1";
-                else if (chkLeaveAcc.Checked)
+
+                if (chkLeaveAcc.Checked)
                     val_actype2 = "2";
 
 
@@ -223,14 +224,14 @@ namespace Jilani_Cards
             {
                 if (ex.Message == "")
                 {
-                    MessageBox.Show("Chart of account already exist", "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);                    
+                    MessageBox.Show("Chart of account already exist", "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
                 else
                 {
                     //MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     isconnected = 1;
                 }
-                    
+
             }
 
             finally
@@ -262,11 +263,12 @@ namespace Jilani_Cards
 
                 if (chkLeaveAcc.Checked)
                     val_actype1 = "1";
-                else if (chkLeaveAcc.Checked)
+
+                if (chkLeaveAcc.Checked)
                     val_actype2 = "2";
 
 
-                SqlDataAdapter da = new SqlDataAdapter("insert into chartaccounts (accountid, acctitle, openbalance, drcr, nature, stax, ntnno, phone, addr1, addr2, addr3, actype1, actype2) values ('" + txtaccountid.Text + "', '" + txtacctitle.Text + "', '" + txtopenbalance.Text + "', '" + val_drcr + "', '" + ddlnature.SelectedValue + "', '" + txtstax.Text + "', '" + txtntnno.Text + "', '" + txtphone.Text + "', '" + txtaddr1.Text + "', '" + txtaddr2.Text + "', '" + txtaddr3.Text + "', '" + val_actype1 + "', '" + val_actype2 + "')", cn.cn);
+                SQLiteDataAdapter da = new SQLiteDataAdapter("insert into chartaccounts (accountid, acctitle, openbalance, drcr, nature, stax, ntnno, phone, addr1, addr2, addr3, actype1, actype2) values ('" + txtaccountid.Text + "', '" + txtacctitle.Text + "', '" + txtopenbalance.Text + "', '" + val_drcr + "', '" + ddlnature.SelectedValue + "', '" + txtstax.Text + "', '" + txtntnno.Text + "', '" + txtphone.Text + "', '" + txtaddr1.Text + "', '" + txtaddr2.Text + "', '" + txtaddr3.Text + "', '" + val_actype1 + "', '" + val_actype2 + "')", cn.cn1);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -296,7 +298,7 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("select concat('00000', max(convert(numeric, accountid))) accountid from chartaccounts", cn.cn);
+                SqlDataAdapter da = new SqlDataAdapter("select concat('00000', max(convert(numeric, accountid))+1) accountid from chartaccounts", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -339,7 +341,7 @@ namespace Jilani_Cards
 
             try
             {
-                SqlDataAdapter da = new SqlDataAdapter("select concat('00000', max(convert(numeric, accountid))) accountid from chartaccounts", cn.cn);
+                SQLiteDataAdapter da = new SQLiteDataAdapter("select concat('00000', max(convert(numeric, accountid))+1) accountid from chartaccounts", cn.cn1);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -467,12 +469,19 @@ namespace Jilani_Cards
         }
 
 
-                
+
 
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
             UpdateChartAccount();
             UpdateChartAccount_Sqlite();
+
+            if (FillGrid() == 1)
+                FillGrid_Sqlite();
+
+            txtaccountid.ReadOnly = false;
+
+            ClearFields();
         }
 
 
@@ -496,12 +505,12 @@ namespace Jilani_Cards
 
                 if (chkLeaveAcc.Checked)
                     val_actype1 = "1";
-                
+
                 if (chkLeaveAcc.Checked)
                     val_actype2 = "2";
 
 
-                SqlDataAdapter da = new SqlDataAdapter("update chartaccounts set acctitle = '" + txtacctitle.Text + "', openbalance = '" + txtopenbalance.Text + "', drcr = '" + val_drcr + "', nature = '" + ddlnature.SelectedValue + "', stax = '" + txtstax.Text + "', ntnno = '" + txtntnno.Text + "', phone = '" + txtphone.Text + "', addr1 = '" + txtaddr1.Text + "', addr2 = '" + txtaddr2.Text + "', addr3 = '" + txtaddr3.Text + "', actype1 = '" + val_actype1 + "', actype2 = '" + val_actype2 +  "' where accountid = '" + txtaccountid.Text + "'", cn.cn);
+                SqlDataAdapter da = new SqlDataAdapter("update chartaccounts set acctitle = '" + txtacctitle.Text + "', openbalance = '" + txtopenbalance.Text + "', drcr = '" + val_drcr + "', nature = '" + ddlnature.SelectedValue + "', stax = '" + txtstax.Text + "', ntnno = '" + txtntnno.Text + "', phone = '" + txtphone.Text + "', addr1 = '" + txtaddr1.Text + "', addr2 = '" + txtaddr2.Text + "', addr3 = '" + txtaddr3.Text + "', actype1 = '" + val_actype1 + "', actype2 = '" + val_actype2 + "' where accountid = '" + txtaccountid.Text + "'", cn.cn);
                 DataSet ds = new DataSet();
                 da.Fill(ds);
 
@@ -567,9 +576,193 @@ namespace Jilani_Cards
         }
 
 
+        private int DeleteChartAccount()
+        {
+            int isconnected = 0;
+
+            CConnection cn = new CConnection();
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter("delete chartaccounts where accountid = '" + txtaccountid.Text + "'", cn.cn);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                MessageBox.Show("Chart of accounts deleted", "Transaction Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+
+            finally
+            {
+                cn = null;
+            }
+
+            return isconnected;
+        }
+
+
+
+        private void DeleteChartAccount_Sqlite()
+        {
+            CConnection cn = new CConnection();
+
+            try
+            {
+                SQLiteDataAdapter da = new SQLiteDataAdapter("delete chartaccounts where accountid = '" + txtaccountid.Text + "'", cn.cn1);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                MessageBox.Show("Chart of account deleted", "Transaction Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+
+            finally
+            {
+                cn = null;
+            }
+        }
+
+
         private void cmdDelete_Click(object sender, EventArgs e)
         {
-            Delete();
+            DeleteChartAccount();
+            DeleteChartAccount_Sqlite();
+
+        }
+
+        private void dg_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dg_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dg.Rows.Count > 0)
+            {
+                txtaccountid.Text = dg.Rows[e.RowIndex].Cells[1].Value.ToString();
+                txtacctitle.Text = dg.Rows[e.RowIndex].Cells[2].Value.ToString();
+                txtopenbalance.Text = dg.Rows[e.RowIndex].Cells[3].Value.ToString();
+
+                if (dg.Rows[e.RowIndex].Cells[4].Value.ToString() == "DR")
+                {
+                    rdoDr.Checked = true;
+                }
+                else
+                {
+                    rdoCr.Checked = true;
+                }
+
+                ddlnature.Text = dg.Rows[e.RowIndex].Cells[5].Value.ToString();
+                txtstax.Text = dg.Rows[e.RowIndex].Cells[6].Value.ToString();
+                txtntnno.Text = dg.Rows[e.RowIndex].Cells[7].Value.ToString();
+                txtphone.Text = dg.Rows[e.RowIndex].Cells[8].Value.ToString();
+                txtaddr1.Text = dg.Rows[e.RowIndex].Cells[9].Value.ToString();
+                txtaddr2.Text = dg.Rows[e.RowIndex].Cells[10].Value.ToString();
+                txtaddr3.Text = dg.Rows[e.RowIndex].Cells[11].Value.ToString();
+
+
+                if (dg.Rows[e.RowIndex].Cells[12].Value.ToString() == "Leave A/c")
+                {
+                    chkLeaveAcc.Checked = true;
+                }
+
+                if (dg.Rows[e.RowIndex].Cells[13].Value.ToString() == "Active A/c")
+                {
+                    chkActiveAcc.Checked = true;
+                }
+
+                txtaccountid.ReadOnly = true;
+            }
+        }
+
+        private void cmdSearch_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtSearch.Text))
+            {
+                MessageBox.Show("Please enter account id", "Blank Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtSearch.Focus();
+            }
+            else
+            {
+                if (SearchChartAccount() == 1)
+                    SearchChartAccount_Sqlite();
+            }
+        }
+
+
+        private int SearchChartAccount()
+        {
+            int isconnected = 0;
+
+            CConnection cn = new CConnection();
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT id, accountid, acctitle, openbalance, case when drcr = 1 then 'DR' else 'CR' end 'DrCr', case when nature = 1 then 'Account Payable' else 'Account Receivable' end 'nature', stax, ntnno, phone, addr1, addr2, addr3, case when actype1 = 1 then 'Leave A/c' end 'A/c Type', case when actype2 = 1 then 'Active A/c' end 'A/c Type' FROM chartaccounts where acctitle like '%" + txtSearch.Text + "%'", cn.cn);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                dg.DataSource = ds.Tables[0];
+
+            }
+
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                isconnected = 1;
+            }
+
+            finally
+            {
+
+            }
+
+            return isconnected;
+
+        }
+
+
+
+        private void SearchChartAccount_Sqlite()
+        {
+            CConnection cn = new CConnection();
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT id, accountid, acctitle, openbalance, case when drcr = 1 then 'DR' else 'CR' end 'DrCr', case when nature = 1 then 'Account Payable' else 'Account Receivable' end 'nature', stax, ntnno, phone, addr1, addr2, addr3, case when actype1 = 1 then 'Leave A/c' end 'A/c Type', case when actype2 = 1 then 'Active A/c' end 'A/c Type' FROM chartaccounts where acctitle like '%" + txtSearch.Text + "%'", cn.cn);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                dg.DataSource = ds.Tables[0];
+
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception Raised", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+
+            finally
+            {
+
+            }
+
+        }
+
+        private void cmdCancel_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = "";
+
+            if (FillGrid() == 1)
+                FillGrid_Sqlite();
         }
     }
 }
